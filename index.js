@@ -1,7 +1,17 @@
+import seedrandom from 'seed-random';
+
+let rng;
 let grid;
 let color_combination;
 
-export default function({ seeds, dim, random_init = false, combo = 'simple' }) {
+export default function({
+  seeds,
+  dim,
+  random_init = false,
+  init_seed = null,
+  combo = 'simple'
+}) {
+  rng = init_seed ? seedrandom('init_seed') : seedrandom();
   grid = [];
   color_combination = combo;
   const h_seed = binaryArray(8, seeds.h);
@@ -106,9 +116,9 @@ function binaryArray(num, seed) {
 }
 
 function flip() {
-  return Math.random() > 0.5;
+  return rng() > 0.5;
 }
 
 function randomInt(max) {
-  return Math.floor(Math.random() * max);
+  return Math.floor(rng() * max);
 }

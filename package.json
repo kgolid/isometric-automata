@@ -12,6 +12,11 @@
   "author": "Kjetil Golid",
   "license": "MIT",
   "devDependencies": {
-    "rollup": "^0.67.4"
+    "rollup": "^0.67.4",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^4.0.0"
+  },
+  "dependencies": {
+    "seed-random": "^2.2.0"
   }
 }
