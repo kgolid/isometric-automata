@@ -11,6 +11,7 @@ export default function({
   init_seed = null,
   palette_size = 4,
   combo = 'simple',
+  offset = 1
 }) {
   rng = init_seed ? seedrandom('init_seed') : seedrandom();
   grid = [];
@@ -19,9 +20,9 @@ export default function({
   const v_seed = binaryArray(8, seeds.v);
   const d_seed = binaryArray(8, seeds.d);
 
-  for (let i = 0; i < dim.y + 1; i++) {
+  for (let i = 0; i < dim.y + offset; i++) {
     let row = [];
-    for (let j = 0; j < dim.x + 1; j++) {
+    for (let j = 0; j < dim.x + offset; j++) {
       let px = { h: false, v: false, d: false };
       if (i == 0) px.h = true;
       if (j == 0) px.v = true;
@@ -58,7 +59,7 @@ export default function({
       colorize(j, i, random_init, palette_size);
     }
   }
-  return grid.slice(1).map(r => r.slice(1));
+  return grid.slice(offset).map(r => r.slice(offset));
 }
 
 function colorize(x, y, random_init, palette_size) {
