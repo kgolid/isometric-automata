@@ -323,7 +323,7 @@
 	    [1, 2, 3, 4, 0, 1]
 	  ];
 
-	  return arr[a][b];
+	  return arr[x][y];
 	}
 
 	function resolve(b1, b2, b3, seed) {
