@@ -17,6 +17,7 @@
     "rollup-plugin-node-resolve": "^4.0.0"
   },
   "dependencies": {
+    "cellular-automata-generator": "^1.0.0",
     "seed-random": "^2.2.0"
   }
 }
