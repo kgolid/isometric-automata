@@ -180,9 +180,78 @@ mixkey(Math.random(), pool);
 });
 var seedRandom_1 = seedRandom.resetGlobal;
 
+// Get bit at pos(ition) for num(ber)
+const get_bit = (num, base, size, pos) => {
+  return parseInt(
+    Number(num)
+      .toString(base)
+      .padStart(Math.pow(base, size), 0)
+      .split('')
+      .reverse()
+      .join('')
+      .charAt(pos)
+  );
+};
+
+const combine = (bs, base) => {
+  return parseInt(bs.join(''), base);
+};
+
+// Returns given number in the form of a tertiary function (a rule)
+const get_rule = (base, num) => (...bs) =>
+  get_bit(num, base, bs.length, combine(bs, base));
+
+const get_random_rule = (base, arity) =>
+  get_rule(base, Math.floor(Math.random() * Math.pow(base, Math.pow(base, arity))));
+
+function get_ca_combine_function(n) {
+  return get_random_rule(n, 2);
+}
+
+function get_combine_function(n) {
+  return (a, b) => combination_tables[n - 2][b][a];
+}
+
+const combination_tables = [table2, table3, table4, table5, table6];
+
+const table2 = [
+  [1, 0],
+  [0, 1]
+];
+
+const table3 = [
+  [2, 2, 1],
+  [2, 0, 0],
+  [1, 0, 1]
+];
+
+const table4 = [
+  [3, 2, 1, 1],
+  [2, 0, 3, 2],
+  [3, 3, 1, 0],
+  [1, 0, 0, 2]
+];
+
+const table5 = [
+  [4, 3, 3, 1, 2],
+  [3, 0, 4, 4, 2],
+  [3, 4, 1, 0, 0],
+  [1, 4, 0, 2, 1],
+  [2, 2, 0, 1, 4]
+];
+
+const table6 = [
+  [5, 2, 4, 1, 1, 3],
+  [4, 0, 3, 5, 2, 2],
+  [3, 5, 1, 4, 0, 3],
+  [4, 4, 0, 2, 5, 1],
+  [2, 5, 5, 1, 3, 0],
+  [1, 3, 0, 0, 2, 4]
+];
+
 let rng;
 let grid;
-let color_combination;
+let combine_function;
 
 function index({
   seeds,
@@ -193,9 +262,13 @@ function index({
   combo = 'simple',
   offset = 1
 }) {
-  rng = init_seed ? seedRandom('init_seed') : seedRandom();
+  rng = init_seed ? seedRandom(init_seed) : seedRandom();
   grid = [];
-  color_combination = combo;
+  combine_function =
+    combo === 'ca'
+      ? get_ca_combine_function(palette_size)
+      : get_combine_function(palette_size);
+
   const h_seed = binaryArray(8, seeds.h);
   const v_seed = binaryArray(8, seeds.v);
   const d_seed = binaryArray(8, seeds.d);
@@ -254,70 +327,7 @@ function colorize(x, y, random_init, palette_size) {
 
 function new_col(a, b, n) {
   if (b === null) return (a + 1) % n;
-  if (n === 6) return combine6(a, b);
-  if (n === 5) return combine5(a, b);
-  if (n === 4) return combine4(a, b);
-  if (n === 3) return combine3(a, b);
-  if (n === 2) return a === b ? 1 : 0;
-}
-
-// ---- UTILS ----
-
-function combine3(x, y) {
-  const arr = [
-    [1, 2, 1],
-    [2, 2, 0],
-    [1, 0, 0]
-  ];
-  return arr[y][x];
-}
-
-function combine4(x, y) {
-  const simple = [
-    [1, 2, 1, 1],
-    [2, 0, 0, 0],
-    [1, 0, 0, 0],
-    [1, 0, 0, 0]
-  ];
-  const strict = [
-    [1, 2, 3, 1],
-    [2, 3, 0, 2],
-    [3, 0, 3, 0],
-    [1, 2, 0, 1]
-  ];
-  const regular = [
-    [1, 3, 1, 2],
-    [3, 2, 0, 0],
-    [3, 0, 3, 1],
-    [2, 2, 1, 0]
-  ];
-  if (color_combination === 'simple') return simple[y][x];
-  if (color_combination === 'strict') return strict[y][x];
-  return regular[y][x];
-}
-
-function combine5(x, y) {
-  const arr = [
-    [3, 3, 1, 4, 2],
-    [3, 4, 4, 2, 0],
-    [1, 4, 0, 0, 3],
-    [4, 2, 0, 1, 1],
-    [2, 0, 3, 1, 2]
-  ];
-  return arr[y][x];
-}
-
-function combine6(x, y) {
-  const arr = [
-    [5, 2, 3, 4, 5, 1],
-    [2, 3, 4, 5, 0, 2],
-    [3, 4, 5, 0, 1, 3],
-    [4, 5, 0, 1, 2, 4],
-    [5, 0, 1, 2, 3, 0],
-    [1, 2, 3, 4, 0, 1]
-  ];
-
-  return arr[x][y];
+  return combine_function(a, b);
 }
 
 function resolve(b1, b2, b3, seed) {

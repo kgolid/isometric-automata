@@ -1,8 +1,10 @@
 import seedrandom from 'seed-random';
+import { get_ca_combine_function, get_combine_function } from './combinations';
 
 let rng;
 let grid;
 let color_combination;
+let combine_function;
 
 export default function({
   seeds,
@@ -16,6 +18,11 @@ export default function({
   rng = init_seed ? seedrandom(init_seed) : seedrandom();
   grid = [];
   color_combination = combo;
+  combine_function =
+    combo === 'ca'
+      ? get_ca_combine_function(palette_size)
+      : get_combine_function(palette_size);
+
   const h_seed = binaryArray(8, seeds.h);
   const v_seed = binaryArray(8, seeds.v);
   const d_seed = binaryArray(8, seeds.d);
@@ -74,11 +81,7 @@ function colorize(x, y, random_init, palette_size) {
 
 function new_col(a, b, n) {
   if (b === null) return (a + 1) % n;
-  if (n === 6) return combine6(a, b);
-  if (n === 5) return combine5(a, b);
-  if (n === 4) return combine4(a, b);
-  if (n === 3) return combine3(a, b);
-  if (n === 2) return a === b ? 1 : 0;
+  return combine_function(a, b);
 }
 
 // ---- UTILS ----
