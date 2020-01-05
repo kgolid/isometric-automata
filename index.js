@@ -13,7 +13,7 @@ export default function({
   combo = 'simple',
   offset = 1
 }) {
-  rng = init_seed ? seedrandom('init_seed') : seedrandom();
+  rng = init_seed ? seedrandom(init_seed) : seedrandom();
   grid = [];
   color_combination = combo;
   const h_seed = binaryArray(8, seeds.h);
