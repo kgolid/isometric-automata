@@ -3,7 +3,6 @@ import { get_ca_combine_function, get_combine_function } from './combinations';
 
 let rng;
 let grid;
-let color_combination;
 let combine_function;
 
 export default function({
@@ -18,7 +17,6 @@ export default function({
 }) {
   rng = init_seed ? seedrandom(init_seed) : seedrandom();
   grid = [];
-  color_combination = combo;
   combine_function =
     combo === 'ca'
       ? get_ca_combine_function(palette_size, color_seed)
