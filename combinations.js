@@ -1,7 +1,12 @@
-import { get_random_rule } from 'cellular-automata-generator';
+import { get_random_rule, get_rule } from 'cellular-automata-generator';
+import seedrandom from 'seed-random';
 
-export function get_ca_combine_function(n) {
-  return get_random_rule(n, 2);
+export function get_ca_combine_function(n, seed) {
+  if (seed === null) return get_random_rule(n);
+
+  const rng = seedrandom(seed);
+  const rule_num = Math.floor(rng() * Math.pow(n, Math.pow(n, 2)));
+  return get_rule(n, rule_num);
 }
 
 export function get_combine_function(n) {

@@ -204,8 +204,12 @@ const get_rule = (base, num) => (...bs) =>
 const get_random_rule = (base, arity) =>
   get_rule(base, Math.floor(Math.random() * Math.pow(base, Math.pow(base, arity))));
 
-function get_ca_combine_function(n) {
-  return get_random_rule(n, 2);
+function get_ca_combine_function(n, seed) {
+  if (seed === null) return get_random_rule(n);
+
+  const rng = seedRandom(seed);
+  const rule_num = Math.floor(rng() * Math.pow(n, Math.pow(n, 2)));
+  return get_rule(n, rule_num);
 }
 
 function get_combine_function(n) {
@@ -260,13 +264,14 @@ function index({
   init_seed = null,
   palette_size = 4,
   combo = 'simple',
-  offset = 1
+  offset = 1,
+  color_seed = null
 }) {
   rng = init_seed ? seedRandom(init_seed) : seedRandom();
   grid = [];
   combine_function =
     combo === 'ca'
-      ? get_ca_combine_function(palette_size)
+      ? get_ca_combine_function(palette_size, color_seed)
       : get_combine_function(palette_size);
 
   const h_seed = binaryArray(8, seeds.h);

@@ -13,14 +13,15 @@ export default function({
   init_seed = null,
   palette_size = 4,
   combo = 'simple',
-  offset = 1
+  offset = 1,
+  color_seed = null
 }) {
   rng = init_seed ? seedrandom(init_seed) : seedrandom();
   grid = [];
   color_combination = combo;
   combine_function =
     combo === 'ca'
-      ? get_ca_combine_function(palette_size)
+      ? get_ca_combine_function(palette_size, color_seed)
       : get_combine_function(palette_size);
 
   const h_seed = binaryArray(8, seeds.h);
@@ -82,65 +83,6 @@ function colorize(x, y, random_init, palette_size) {
 function new_col(a, b, n) {
   if (b === null) return (a + 1) % n;
   return combine_function(a, b);
-}
-
-// ---- UTILS ----
-
-function combine3(x, y) {
-  const arr = [
-    [1, 2, 1],
-    [2, 2, 0],
-    [1, 0, 0]
-  ];
-  return arr[y][x];
-}
-
-function combine4(x, y) {
-  const simple = [
-    [1, 2, 1, 1],
-    [2, 0, 0, 0],
-    [1, 0, 0, 0],
-    [1, 0, 0, 0]
-  ];
-  const strict = [
-    [1, 2, 3, 1],
-    [2, 3, 0, 2],
-    [3, 0, 3, 0],
-    [1, 2, 0, 1]
-  ];
-  const regular = [
-    [1, 3, 1, 2],
-    [3, 2, 0, 0],
-    [3, 0, 3, 1],
-    [2, 2, 1, 0]
-  ];
-  if (color_combination === 'simple') return simple[y][x];
-  if (color_combination === 'strict') return strict[y][x];
-  return regular[y][x];
-}
-
-function combine5(x, y) {
-  const arr = [
-    [3, 3, 1, 4, 2],
-    [3, 4, 4, 2, 0],
-    [1, 4, 0, 0, 3],
-    [4, 2, 0, 1, 1],
-    [2, 0, 3, 1, 2]
-  ];
-  return arr[y][x];
-}
-
-function combine6(x, y) {
-  const arr = [
-    [5, 2, 3, 4, 5, 1],
-    [2, 3, 4, 5, 0, 2],
-    [3, 4, 5, 0, 1, 3],
-    [4, 5, 0, 1, 2, 4],
-    [5, 0, 1, 2, 3, 0],
-    [1, 2, 3, 4, 0, 1]
-  ];
-
-  return arr[x][y];
 }
 
 function resolve(b1, b2, b3, seed) {
